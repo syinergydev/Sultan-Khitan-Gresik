@@ -156,7 +156,7 @@ p{text-wrap:pretty}
 .tile--hero{background:linear-gradient(155deg,var(--navy),#1a4670);color:#fff;border:0}
 .tile--hero p{color:rgba(255,255,255,.8)}
 .tile--hero .ico{background:rgba(201,164,76,.18);color:var(--gold)}
-.tile--hero::after{content:"";position:absolute;right:-40px;bottom:-40px;width:220px;height:220px;background:url(../brand/crown.webp) center/contain no-repeat;opacity:.1;filter:brightness(1.4)}
+.tile--hero::after{content:"";position:absolute;right:-40px;bottom:-40px;width:220px;height:220px;background:url(crown.webp) center/contain no-repeat;opacity:.1;filter:brightness(1.4)}
 .tile--gold{background:var(--gold);border:0;color:var(--navy)}.tile--gold p{color:rgba(16,43,70,.8)}.tile--gold .ico{background:rgba(255,255,255,.4);color:var(--navy)}
 .tile--sky{background:var(--sky)}
 .tile h3{font-size:clamp(1.3rem,2.4vw,1.9rem)}
