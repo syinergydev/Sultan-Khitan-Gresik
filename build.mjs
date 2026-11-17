@@ -62,8 +62,9 @@ function layout({ path: p, title, desc, h, body, ctx = 'home', schema = '', ogIm
   const cur = (href) => (href === p ? ' aria-current="page"' : '');
   const url = C.siteUrl ? C.siteUrl.replace(/\/$/, '') : '';
   const full = `${title} | ${C.name}`;
-  return `<!doctype html>
-<html lang="id">
+  const depth = p === '/' ? 0 : 1;
+  const html = `<!doctype html>
+<html lang="id"${p === '/' ? ' data-home' : ''}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -83,7 +84,7 @@ ${url ? `<meta property="og:url" content="${url}${p}">` : ''}
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/site.css">
-<script>(function(){var d=document.documentElement;d.classList.add('js');try{if(!sessionStorage.getItem('sk_pl')&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&location.pathname==='/'){d.classList.add('pl');setTimeout(function(){d.classList.remove('pl')},5000)}sessionStorage.setItem('sk_pl','1')}catch(e){}})()</script>
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{if(!sessionStorage.getItem('sk_pl')&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&d.hasAttribute('data-home')){d.classList.add('pl');setTimeout(function(){d.classList.remove('pl')},5000)}sessionStorage.setItem('sk_pl','1')}catch(e){}})()</script>
 ${schema}
 </head>
 <body data-wa="${esc(wa(MSG[ctx] || MSG.home))}">
@@ -113,6 +114,8 @@ ${footer()}
 <script src="/assets/js/main.js" defer></script>
 </body>
 </html>`;
+  const pre = depth ? '../' : './';
+  return html.replace(/(href|src|data-full|content)="\/(?!\/)([^"]*)"/g, (m, a, rest) => `${a}="${pre}${rest}"`);
 }
 
 function footer() {
@@ -425,7 +428,8 @@ fs.copyFileSync(path.join(ROOT, 'src/site.css'), path.join(DIST, 'assets/css/sit
 fs.copyFileSync(path.join(ROOT, 'src/main.js'), path.join(DIST, 'assets/js/main.js'));
 fs.copyFileSync(path.join(ROOT, 'assets/icons/favicon-32.png'), path.join(DIST, 'favicon.ico'));
 const site = C.siteUrl.replace(/\/$/, '');
+fs.writeFileSync(path.join(DIST, '.nojekyll'), '');
 fs.writeFileSync(path.join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n${site ? `Sitemap: ${site}/sitemap.xml\n` : ''}`);
 if (site) fs.writeFileSync(path.join(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.map((p) => `<url><loc>${site}${p.path}</loc></url>`).join('')}</urlset>`);
-fs.writeFileSync(path.join(DIST, '404.html'), `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Halaman tidak ditemukan</title><body style="font-family:system-ui;text-align:center;padding:4rem 1rem;background:#FAFAF7;color:#102B46"><h1>Halaman tidak ditemukan</h1><p><a href="/">Kembali ke Beranda</a></p>`);
+fs.writeFileSync(path.join(DIST, '404.html'), `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Halaman tidak ditemukan</title><body style="font-family:system-ui;text-align:center;padding:4rem 1rem;background:#FAFAF7;color:#102B46"><h1>Halaman tidak ditemukan</h1><p><a href="./">Kembali ke Beranda</a></p>`);
 console.log('built', pages.length, 'pages');
